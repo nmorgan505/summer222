@@ -1,0 +1,12 @@
+# and 
+[ 1 -eq 1 -a 2 -eq 2 ] # -a for and 
+[[ 1 -eq 1 && 2 -eq 2 ]] # && in double brackets for and 
+[ 1 -eq 1 ] && [ 2 -eq 2 ] # && outside of single brackets 
+
+# or 
+[ 1 -eq 1 -o 2 -eq 2] # -o for or 
+[[ 1 -eq 1 || 2 -eq 2 ]] 
+[ 1 -eq 1 ] || [ 2 -eq 2]
+
+# not 
+[ ! -f "hello.txt" ] # ! before a test  
