@@ -1,0 +1,8 @@
+
+
+# Vowel Counter
+# 1. Take user input in a function, return it to main
+# 2. Make a function that counts the vowels in user input
+# 3. Print out the results from this in main 
+# Hint: Switch-cases do exist
+# Hint 2: #include <ctype.h> to use tolower()
