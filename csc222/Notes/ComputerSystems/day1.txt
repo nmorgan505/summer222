@@ -1,0 +1,171 @@
+Computer Systems:
+
+	- A computer system consists of hardware and system software that work together 
+	to run application programs 
+
+	- Consider the following:
+	
+	#include <stdio.h>
+	int main(){
+		printf("Hello World\n");
+		return 0;
+	}
+
+	^ we'll call this hello.c
+
+	- This program begins as a "source file" that is created and modified by a 
+	programmer and then save as a "text" file, hello.c.
+	- The source file is a sequence of bits, each with a value of 0 or 1. These are 
+	usually organized into 8-bit chunks called bytes, each byte represents some text
+	character in the program.
+	- Most modern systems represent text characters using the ASCII format that represents 
+	each character with a unique byte-sized integer
+	- In our hello.c program, each byte has an integer value that corresponds to a char.
+
+	Ex: # 	i	n	c	l	u	d	e
+	    35  105	110	99	108	117	100	101
+
+	- Files like "hello.c" that contain exclusively ascii characters are known as 
+	text files. All other files are known as binaries, or binary files.
+	- All information in a system including disk files, programs stored in memory, and
+	user data stored in memory are represented as bits. The only difference between 
+	a text file and binary is that text files are meant to be human readable, and binary
+	files are meant to be computer readable
+
+# Compilation Systems	
+	
+	- We write the hello program as a high-level C program, since it's easier for humans
+	to read and understand in this form
+	- For a system to read, it must translate individual C statements into 
+	a sequence of low-level machine instructions
+
+	- The compilation system has 4 steps:
+		- Preprocessing (cpp)
+		- Compilation (cc1)
+		- Assembly (as)
+		- Linking (ld)
+
+	- Preprocessing:
+		- The preprocessor (cpp) modifies the original C program according to 
+		directives that begin with the # character. For example: the #include 
+		<stdio.h> command in line 1 of hello.c tells the preprocessor to read the 
+		contents of the system header file (stdio.h) and insert it directly into 
+		the program text.
+			- input: hello.c
+			- output: hello.i
+
+	- Compilation:
+		- The compiler (cc1) translates the text files hello.i into the text file
+		hello.s, which contains an assembly-language program. Each statement in 
+		an assembly-language program describes exactly one low-level machine-language
+		instruction in a standard text form.
+			- input: hello.i
+			- output: hello.s
+
+	- Assembly:
+		- The assembler (as) translates hello.s into machine language instructions,
+		and packages them in a form known as a "relocatable object program", and 
+		stores the results in the object file hello.o. The hello.o is a binary 
+		file whose bytes encode machine language instructions rather than characters.
+		if we were to view hello.o in a text editor, it would appear to be gibberish.
+			- input: hello.s
+			- output: hello.o
+
+	- Linking phase:
+		- Note that our hello program calls the printf function, which is part of the 
+		standard C library provided by every C compiler. The printf function 
+		resides in a separate precompiled object file called printf.o, which somehow 
+		must be merged with our hello.o program. The linker (ld) handles this merging.
+		The result is the hello file, which is an "executable object file" (or just 
+		executable) that is ready to be loaded into memory and executed by the system.
+			- input: hello.o
+			- output: hello
+
+# Hardware Interaction:
+	- At this point, our hello.c source program has been translated by the compilation 
+	system into an executable file called "hello" that is stored on disk.
+	- To run the executable file on a Unix system, we type it's name into an application
+	program called the shell: -i.e. $ ./hello
+	- To understand what happens to the hello program when we run it, we need a better 
+	understanding of the hardware organization of a typical computer system
+
+	- Buses:
+		- Running through the system is a collection of electrical conduits called 
+		"buses" that carry bytes of information back and forth between components
+		- Most system buses are typically designed to transfer fixed-sized chunks of 
+		bytes - most of the machines we use now either have 32-bit or 64-bit buses.
+
+	- I/O devices:
+		- Input/output devices are the system's connection to the external world
+		- Our example system will have 4 I/O devices: a keyboard, mouse, display,
+		and disk
+		- initially, the executable hello will reside on disk
+
+	- Main Memory:
+		- The main memory is a temporary (volitile) storage device that holds 
+		programs and program data that should be accessible to the processor 
+		during program execution, note that speed is much higher than disk
+
+	- Processor:
+		- The central processing unit (CPU), or simply the processor, is the engine,
+		or brain that executes instructions that are stored in memory.
+		- At its core is a register called the "program counter" (PC). At any point 
+		in time, the PC points at (contains the address of) some machine-language 
+		instruction in main memory.
+		- From the time that power is applied to the system, until the time it is 
+		shut off, a processor repeatedly executes the instruction pointed at by
+		the PC, and updates it to point at the next instruction (the instruction 
+		cycle)
+		- The processor "reads" the instruction from memory pointed at by the PC,
+		"interprets" the bits in the instruction, "performs" some simple operation
+		dictated by the instruction, and then "updates" the PC to point at the next 
+		instruction.
+
+# OS controls the hardware
+
+	- When the shell loads and runs our "hello" program, and when the hello program 
+	prints its message, neither program (hello, or shell) directly accesses the keyboard,
+	display, disk, or main memory. This is instead handled by services provided by
+	the operating system.  
+	- We can think of the OS as a layer of software interposed between the application
+	program and the hardware. All attempts by an application to manipulate the hardware
+	must go through the OS.
+	- The OS has two primary purposes:
+		1. To protect the hardware from misuse by runaway applications
+		2. To provide applications with simple and uniform mechanisms for manipulating 
+		complicated and often wildly different low-level hardware devices
+	- The primary abstractions (or fundamental abstractions) to achieve these goals:
+		- Processes
+		- Virtual Memory
+		- Files
+
+	- Processes:
+		- A process is the operating system's abstraction for a running program.
+		- Multiple processes can run concurrently on the same system, and each 
+		process appears to have exclusive use of the hardware
+
+	- Virtual memory:
+		- Virtual memory is an abstraction that provides each process with the illusion
+		that it has exclusive use of the main memory
+	
+	- Files:
+		- A file is a sequence of bits/bytes. Nothing more, and nothing less.
+		- Every I/O device is modeled as a file.
+		- All input and output in the system is performed by reading and writing 
+		files, usnig a small set of system calls. In unix, this is called (creatively)
+		Unix I/O.
+
+Summary:
+	- A computer system consists of hardware and system software that cooperate to run
+	application programs.
+	- Information inside the computer is represented as a group of bits that interpret 
+	in different ways based on the context it is called.
+	- Programs are translated by other programs into different forms (compilation), beginning 
+	in ASCII text, and then traslated through precompilers, compilers, assemblers, 
+	and linkers into binary executable files.
+	- Processors read and interpret instructions that are stored in main memory
+	- The OS serves as an intermediary between applications and hardware
+	- The OS provides three fundamental abstractions
+		- Files are abstractions for I/O devices
+		- Virtual memory is an abstraction for main memory and disk
+		- Processes are abstractions for the processor, main memory, and I/O devices
