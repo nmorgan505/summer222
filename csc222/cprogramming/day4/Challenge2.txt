@@ -1,0 +1,11 @@
+### Challenge 2
+
+Write a program that calculates the average of user provided numbers
+
+1. Prompt the user for the number of values they are going to find the average of
+2. Allocate enough space for those ints
+3. Request values from the user (up to their top limit)
+4. Create a function that will return the average of the provided numbers
+5. In main, give output in a print statement
+
+
