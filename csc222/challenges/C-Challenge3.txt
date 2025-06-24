@@ -1,0 +1,10 @@
+use "wget https://www.gutenberg.org/cache/epub/98/pg98.txt" to get A Tale of Two Cities
+
+Challenge: Write a c program that counts the frequency of words from a given file:
+
+	1. The function should be structured as the following when run:
+	./Challenge3 <file-to-read> <word-to-find>
+	2. The program should use the "word to find", and parse "file to read",
+	and count the number of occurances in the read file.
+	3. Return some output to the user: "The word <word-to-find> was found <x> times
+	in <file-to-read>."

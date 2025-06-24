@@ -1,0 +1,111 @@
+Data Representation and Manipulation
+
+- Overview:
+	- Binary represenation: Unsigned, signed (Two's complement), floating point
+	representation (IEEE 754)
+	- Hexadecimal representation and transformations
+
+- Assume we have the bits 11000001 00001100 00000000 00000000
+	- Unsigned value that can be written as 3238789120 in base 10
+	- Signed (two's comp) that can be written as -105617876 in base 10
+	- IEEE 754 floating point value that can be written as -8.75 
+		- This is the standard representation of a float C 
+
+- Recall that 1 byte is 8 bits, so one byte can hold values from 00000000 to 11111111
+- This can be represented in Hexadecimal as 0x00 to 0xFF
+- Hex uses the characters 0-9 and A-F to assign values from 0 to 15.
+- Remember that each character in hex represents 4 bits, or half a byte. This means that
+every two characters is one byte.
+
+Word:
+	- Machines have what we refer to as a "word size". Unlike bits, or bytes, which 
+	will always have the same size, word-size on one machine is not necessarily the 
+	same size as it may be on another machine.
+
+	- The word size of a machine is the nominal size of integer-valued data. On 64-bit 
+	machines, ints are typically 8 bytes (64 bits), thus the word size is 64 bits.
+	On 32-bit machines, ints are typically 4 bytes (32 bits), thus the word size is 
+	32 bits.
+
+	- Note: integer size of the machine may or may not be the same size of an int on 
+	specific programming languages. In C, when we declare an int, they are 4 bytes,
+	even on most 64-bit machines.
+
+	- Most current machines (64-bit) can address up to 1.8 * 10^19 bytes. Older machines
+	(32-bit) limit address spaces to 4 GB - too small for memory intensive applications
+	
+	- Word-Oriented Memory Organization - Addresses specify Byte locations
+	- Address of the first byte in a word, and successive words differ by 4 (32-bit machines)
+	or 8 bytes (64-bit machines)
+
+
+- Data representation in C:
+
+	- Size of C data types:
+	
+	Data Type	Typical 64-bit	Typical 32-bit
+	int		4		4
+	long int	8		4
+	char		1		1
+	short		2		2
+	float		4		4
+	double		8		8
+	char *		8		4
+
+
+- Byte Ordering Conventions:
+	- Big Endian: Place the least significant byte into the highest address
+	- Little Endian: Place the least significant byte into the lowest address
+
+	- Example: Assume we have a variable x such that x = 0x01234567.
+	If we call on &x to get the address, we would receive 0x100, since this is 
+	the lowest memory address that contains a value
+
+	Memory address:	0x099	0x100	0x101	0x102	0x103	0x104	0x105
+	Big Endian:		0x01	0x23	0x45	0x67		
+	Little Endian:		0x67	0x45	0x23	0x01
+
+
+- Bitwise Operators:
+	- We have the following bitwise operators available:
+		- & - and
+		- | - or
+		- ~ - not
+		- ^ - xor
+
+	- Assume we have the variables x=0x41 and y=0xBE. Note, each is 1 byte in size	
+		- What is ~x?
+		x = 0100 0001
+	       ~x = 1011 1110
+	       ~x = 0xBE
+	- Assume we have the values x=0x65 and y=0x59
+		- What is x & y
+		x   = 0110 0101
+		y   = 0101 1001
+		x&y = 0100 0001
+		    = 0x41
+	- Assume we have the values x=0xB4, y=0x87
+		- What is ~(x & y)
+		x   = 1011 0100
+		y   = 1000 0111
+		x&y = 1000 0100
+	      ~(x&y)= 0111 1011
+		    = 0x7B
+
+- Boolean Algebra:
+	- Developed in 1800s (19th century)
+	- Encode 1 as True, 0 as False
+	- Primitive operations: AND, OR, and NOT
+	- Primitive gates can be used for XOR
+		- A^B = (~A & B) | (A & ~B)
+
+	- Properties:
+		- Commutative Sum: A^B = B^A
+		- Commutative Product: A&B=B&A
+		- Associative Sum: (A^B)^C = A^(B^C)
+		- Associative Product: (A&B)&C = A&(B&C)
+		- Product over sum (Distribution): A&(B^C) = (A^B)&(A^C)
+		- 0 is sum identity: A^0 = A
+		- 1 is product identity: A&1 = A
+		- 0 is product annihilator: A&0 = 0
+		- Additive Inverse: A ^ A = 0
