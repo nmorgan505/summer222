@@ -109,3 +109,93 @@ Word:
 		- 1 is product identity: A&1 = A
 		- 0 is product annihilator: A&0 = 0
 		- Additive Inverse: A ^ A = 0
+
+- Logical Operations
+	- Encode 1 as True, and 0 as False
+	- &&: logical and
+	- ||: logical or
+	- ! : logical not
+	- Examples: 
+		- !0x41 = 0x00
+		- 0x55 && 0x6B = 0x01
+		- !(0x00 || 0x01) = 0x00
+
+- Unsigned and Signed Ints:
+	- X = x(w-1)x(w-2)...x(1)x(0)
+
+- Unsigned = B2U(X) = (sum from i = 0 to w-1)(x(i)*2^i)
+- Two's Complement: B2T(X) = -x(w-1)*2^(w-1)(sum from i = 0 to w-2)(x(i)*2^i)
+	- 1 for negative in most significant bit
+	- 0 for nonnegative
+
+char x = 123: 01111011
+char y = -123: 10000101
+
+Weight		123		-123
+     1           1		  1      +1
+     2		 1                0
+     4		 0                1      +4
+     8		 1                0
+     16          1		  0
+     32          1		  0	
+     64          1		  0
+   -128	         0		  1     -128
+
+					-123
+
+- Converting from Unsigned to signed (two's complement):
+	- Flip bits in postive number and add 1
+	- 123:  01111011
+	- flip: 10000100
+	- add 1:10000101
+
+- Numeric Ranges:
+	- Unsigned numbers:
+		- UMin = 0
+		- Umax = (2^w) - 1
+	- Signed ints (two's comp):
+		- TMin = -(2^w-1)
+		- TMax = (2^w-1)-1
+
+- Values for w = 16
+		Decimal		Hex		Binary
+UMax		65535		FF FF		11111111 11111111
+Tmax		32767		7F FF		01111111 11111111
+Tmin           -32768		80 00		10000000 00000000
+-1(2's comp)	-1		FF FF		11111111 11111111
+0		0		00 00		00000000 00000000
+
+- Word Sizes:
+		8	16	32		64
+Umax		255	65535	4294967295	~18 quintillion
+Tmax		127	32767   2147483647	~9 quintillion
+Tmin		-128	-32768 -2147483647	~-9 quintillion
+
+- Observations:
+	- |TMin| = TMax + 1
+	- UMax = 2 * TMax +1
+
+- C Programming:
+	- #include <limits.h>
+	- Declares the constants:
+	- UCHAR_MAX (=255)
+	- CHAR_MAX (127)
+	- CHAR_MIN (-128)
+	- INT_MIN
+	- INT_MAX
+	- UINT_MAX
+
+- Sign extension ( Two's complement signed values)
+	- Given a w-bit signed integer x, to convert it to a w+k bit integer of the same 
+	value:
+	- Make k copies of the sign bit
+	- Ex:
+		- X = 1001 (-7), w=4, k=4 (to reach 8 bits)
+		- X' = 1111 1001 = (-7)
+
+- 2's Complement and overflow 
+	- Assume TAdd(u, v) adds the numbers u and v together
+	- Determine if s = TAdd(u, v) overflows:
+	- Overflow if and only if either:
+		- u < 0, v < 0, s >= 0: Negative overflow
+		- u >= 0, v > 0, s < 0: Positive overflow
