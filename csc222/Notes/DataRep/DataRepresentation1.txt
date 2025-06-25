@@ -199,3 +199,139 @@ Tmin		-128	-32768 -2147483647	~-9 quintillion
 	- Overflow if and only if either:
 		- u < 0, v < 0, s >= 0: Negative overflow
 		- u >= 0, v > 0, s < 0: Positive overflow
+
+- Shifting:
+	- u << k : Shift u (usually a binary value) to the left k times
+		- Get rid of bits on the left that are outside of our byte range
+		- Fill in with 0's on the right
+
+	- Example: w = 8, 1001 1100 << 3
+			  128 + 16 + 8 + 4 = 156
+			  1110 0000 
+			  128 + 64 + 32 = 224
+	- Example w = 16, 0000 0000 1001 1100 << 3
+			  156 << 3
+			  0000 0100 1110 0000 
+			  1024 + 128 + 64 + 32 = 1248
+	- 1248 / 156 = 8
+	- Left shift multiplication: u << k = u * 2^k
+
+	- Right shift: u >> k: shift u to the right k times
+		- Get rid of values on the right
+		- Logical Shift: fill in the left side with 0's
+		- Arithmetic Shift: Replicate the most significant bit (the sign bit)
+			on the left 
+		- u >> k = u/2^k
+
+-  IEEE 754 Floating Point Representation:
+
+	- IEEE 754 Floating Point Representation is similar to the floating point representation
+	from 132, when using the 132 method, it is possible to represent numbers in more 
+	than one way. When using the normalization method from IEEE 754, you only have one 
+	correct way to represent any given number. Implicit Normalization (IEEE 754) is more
+	accurate than explicit normalization as well. 
+
+	- Bias used in IEEE 754:
+		- 16 bits: half-point precision: 
+			- 11 bits for the significand (1 sign, the rest mantissa)
+			- 5 bits for the exponent
+			- Bias value: 15
+		- 32 bits: single-point precision:
+			- 24 bits for the significand 
+			- 8 bits for the exponent
+			- Bias: 127
+		- 64 bits: double precision:
+			- 53 bits for the significand
+			- 11 bits for the exponent
+			- Bias: 1023
+
+	- Extra Notes: E = Exponent, m = mantissa, s = sign
+		- E = 0000 0000, m = 00000..000, s = 0 or 1
+			- This represents +0 or -0 
+		- E = 1111 1111, m = 00000..000, s = 0
+			- Positive infinity
+		- E = 1111 1111, m = 00000..000, s = 1
+			- Negative infinity
+		- 1 <= E <= 254, m = xxxxx..xxx, s = 0 or 1
+			- This is where we use the implicitly normalized form
+			- We'll get to the conversion in a moment
+		- S = 0 or 1, E = 0, M != 0:
+			- This represents Fractional Form
+			- Since this has no integer part it will have a different conversion
+			than the implicitly normalized form
+		- S = 0 or 1, E = 255, M != 0:
+			- This is not a number (NAN)
+
+	- Decoding Floating point numbers:
+		- (-1)^S x 1.M x 2^(E-127)
+
+	- For fractional form:
+		- (-1)^S x 0.M x 2^(E-126)
+
+	Examples:
+	- Convert -4.25 to single point precision IEEE 754 floating point number
+		- Step one: Convert to binary
+			- 4 = 100
+			- .25 = .01
+			- 4.25 = 100.01
+		- Step two: Use implicit normalization to shift the radix point to the 
+			right of the most significant bit with a value of 1.
+			This shift is done by multiplying your binary value by 2^k,
+			where k is the number of positions you need to shift your radix 
+			point.
+			- 100.01 * 2^2 (k = 2)
+			- 1.0001
+			- The value to the right of the radix point is your mantissa
+			- m = 0001
+			- k is your "temporary exponent", since we still need to apply the 
+			bias
+		- Step 3: Bias your exponent by adding 127 to your temporary exponent.
+			  This is your "True exponent". Convert this to Binary
+
+			- 2 + 127 = 129
+
+			- 129 = 1000 0001
+
+		- Step 4: Fill in your sign, exponent and mantissa.
+
+		S	Exponent	Mantissa
+		1	1000 0001	00010000...00
+
+	- Example: Convert 55.125 to IEEE 754 single-point precision floating point 
+		representation.
+		- 0 10000100 101110010000....00 x4
+		Step 1: 55.125
+			- 55 = 110111
+			- .125 = 0.001
+		Step 2: 110111.001 = 1.10111001 * 2^5
+
+		Step 3: normalize exponent: 5 + 127 = 132 -> 10000100
+
+		Step 4: fill in values:
+		S	Exponent	Mantissa
+		0	10000100	101110010000..000
+
+
+	- Example 3: 1 10000011 1110001010000...000
+		- -30.15625 x4
+
+		Step 1: s = 1 (negative)
+			m = 111000101
+			E = 10000011
+		Step 2: 128+1+2 = 131 - 127 = 4
+		Step 3: 1.111000101 * 2^4 = 11110.00101 -> 30.15625
+		Step 4: s = 1, so we get -30.15625
+
+	Example 4: Fractional Form
+		- convert 1 0000 0000 01100000...000 to decimal
+		
+		- (-1)^S x 0.M x 2^(-126)
+
+		- (-1)^1 x 0.011 x 2^(-126)	
+
+		- -1 * .375 x 2^(-126) = -.375 x 2^(-126) <- this form is OK
+
+
+			
+			
+			 
