@@ -1,0 +1,120 @@
+
+# Assembly Language
+
+## Registers:
+
+Base Label		Label for Lower n-bits of a Register	Additional Info
+			8-bit	16-bit	32-bit	64-bit
+a			al	ax	eax	rax		a for accumulator
+b			bl	bx	ebx	rbx		b for base
+c			cl	cx	ecx	rcx		c for counter
+d			dl	dx	edx	rdx		d for data
+si			sil	si	esi	rsi		source index
+di			dil	di	edi	rdi		destination index
+bp			bpl	bp	ebp	rbp		stack base pointer
+sp			spl	sp	esp	rsp		stack pointer (and position of functions)
+r8			r8b	r8w	r8d	r8
+r9			r9b	r9w	r9d	r9
+r10			r10b	r10w	r10d	r10
+r11			r11b	r11w	r11d	r11
+r12			r12b	r12w	r12d	r12
+r13			r13b	r13w	r13d	r13
+r14			r14b	r14w	r14d	r14
+r15			r15b	r15w	r15d	r15
+
+
+# Prefixes/Suffixes
+	- Suffixes:
+		- l: lower
+		- x: extended
+		- b: byte
+		- w: word
+		- d: double
+	- Prefixes:
+		- e: extended
+		- r: 
+# Why learn assembly?
+	- Optimization 
+		- Understanding the optimization capabilites of a compiler
+		- complex code for simple tasks can be memory intensive due to size assembly
+		code can become, since this is a direct reflection of machine code
+	- Run-time behavior analysis 
+		- understanding the run-time behavior of a program that is hidden 
+		by the layer of abstraction that a high-level programming language provides
+	- Security
+		- Understanding how programs store their control information to guard 
+		against malware that exploits weaknesses in system programs 
+
+# C:
+	*dest = t;
+	- Store value of t at location pointed at by dest
+# Assembly Code (ASM):
+	movq	%rax, (%rbx)
+	- Move 8 byte value to memory
+	- Operands:
+		- t: Register		%rax
+		- dest: Register	%rbx
+		- *dest: memory		M(%rbx)
+
+# Register Conventions
+- Assume function A calls function B: A is the "Caller" and B is the "Callee"
+Base	Convention		Callee or Caller owned
+a	return value		Callee
+b	local variable		Caller
+c	4th argument		Callee
+d	3rd argument		Callee
+si	2nd argument		Callee
+di	1st argument		Callee
+bp	local variable		Caller
+sp	stack pointer		Caller
+r8	5th argument		Callee
+r9	6th argument		Callee
+r10	scratch/temp		Callee
+r11	scratch/temp		Callee
+r12	local variable		Caller
+r13	local variable		Caller	
+r14	local variable		Caller
+r15	local variable		Caller
+
+Callee Owned / Caller Saved / Call Clobbered: Used for temporary quantities
+Caller Owned / Callee Saved / Call Preserved: Used for values needed across all calls
+
+# Instruction Operands:
+	- With AT&T syntax, we address registers, memory, and immediate values with 
+	the following syntax
+		- $: used in front of immediate values
+			- $15 would be the actual value 15
+		- %: used in front of registers
+			- %rax 
+		- (): used to dereference a memory address (get the value from memory)
+
+	- Examples:
+		- $-17 is the integer -17
+		- $0xC is the integer 12
+		- 0x108 is just a memory address
+		- %rax accesses the value stored in register rax
+		- (%rax) accesses the value stored in the memory address that rax stores
+
+	- Scaling, Shifting, and Indexing
+		- Format: A(B, I, S)
+		- B: base value
+		- I: Index (think of this like an array)
+		- S: Scalar on the index value (must be 1, 2, 4, or 8)
+		- A: Shift value
+		
+		- Examples:
+			- 9(%rax): means to access the value at the memory location in rax
+				and add 9 to that value
+			- (%rbx, %rdi): The base memory is located at rbx, and rdi tells us 
+					the index to apply to the base location. Usage applies
+					well to arrays, where indexes are more clearly defined
+			- -12(%rbx, %rdi): Go to 12 addresses before where the previous example
+					   would have been
+			- ( ,%rdi, 4): multiply the value of rdi by 4, and go to that memory 
+				       address
+			- 10( ,%rdi, 4): go 10 addresses past where the previous example would 
+					 have been
+			- 10(%rbx, %rdi, 4): Determine the index by multiplying rdi by 4, 
+					     apply this index to the base, and go 10 addresses 
+					     over.
+ 
