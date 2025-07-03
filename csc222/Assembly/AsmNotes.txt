@@ -118,3 +118,57 @@ Caller Owned / Callee Saved / Call Preserved: Used for values needed across all 
 					     apply this index to the base, and go 10 addresses 
 					     over.
  
+# The move operator:
+	# x86 format: Operator	source, dest
+
+	- mov_		source, dest
+	- moves information from a source to a destination
+
+	## Suffixes
+		- b: byte	movb moves 8 bytes of data
+		- w: word	movw moves 16 bytes of data
+		- l: double word	movl moves 32 bytes of data
+		- q: quad word		movq moves 64 bytes of data
+
+	## Examples:
+
+		- movl		$0x4050, %eax
+			- eax is a 32 bit register, so we should only mov(l) 32 bits of data
+		- movw		%bp, %sp
+			- both registers limit us to 16 bits, so we use movw
+		- movw		%dx, (%rax)
+			- dx limits us to 16 bits
+		- movb		(%rsp, %rdx, 4), %dl
+			- dl limits up to 8 bits
+
+# The lea operation:
+	- Means load effective address
+	- lea_		src, dest
+	- Note that lea can calculate a value at the src operand, but does not dereference it
+	  (find it in memory)
+	- Because of this, lea is frequently used for linear math (add, sub., mult.)
+
+# State flags
+	- ZF: Zero Flag- High if the most recent operation resulted in 0
+	- SF: Sign Flag- High if the most recent operation resulted in a negative value
+	- CF: Carry Flag- High if the most recent operation resulted in a carry out of the
+		          most significant bit
+	- OF: Overflow Flag- High if the most recent operation caused a two's comp. overflow
+
+# Arithmetic operations:
+	- Two operand instructions:
+	- add_		src, dest	-> Dest = Dest + Src
+	- sub_		src, dest	-> Dest = Dest - Src
+	- imul_		src, dest	-> Dest = Dest * Src
+	- sal_		src, dest	-> Dest = Dest << Src
+	- sar_		src, dest	-> Dest = Dest >> Src (arithmetic shift)
+	- shr_		src, dest	-> Dest = Dest >> Src (logical shift)
+	- xor_		src, dest	-> Dest = Dest ^ Src
+	- and_		src, dest	-> Dest = Dest & Src
+	- or_		src, dest	-> Dest = Dest | Src
+
+	- Single operand instructions:
+	- inc_		Dest		-> Dest = Dest + 1
+	- dec_		Dest		-> Dest = Dest - 1
+	- neg_		Dest		-> Dest = -Dest
+	- not_		Dest		-> Dest	= ~Dest	
