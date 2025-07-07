@@ -172,3 +172,77 @@ Caller Owned / Callee Saved / Call Preserved: Used for values needed across all 
 	- dec_		Dest		-> Dest = Dest - 1
 	- neg_		Dest		-> Dest = -Dest
 	- not_		Dest		-> Dest	= ~Dest	
+
+# Comparison and Jump Operations:
+	# Comparison:
+	- cmp_		op1, op2	- result = op1-op2
+
+	# Jumping:
+	- jmp		target		- unconditional jump to a target (usually a label)
+	- je		target		
+		- Jump if equal: if ZF = 1, jump to target
+	- jne		target
+		- Jump if not qual: if ZF = 0, jump to target
+	- jg		target
+		- Jump if greater than: if ZF = 0, and SF = OF, jump to target
+	- jl		target
+		- Jump if less than: if SF != OF, jump to target
+	- jge		target
+		- Jump if greater than or equal: if SF = OF, jump to target
+	- jle		target
+		- Jump if less than or equal: if ZF = 1 or SF != OF
+
+# Reverse Engineering:
+	- Starting from Assembly code, reconstruct a program in a human readable langauge
+
+
+	ASM:					Notes:
+	example:
+		movq	%rdi, %rax		# rax = rdi
+		addq	%rsi, $rax		# rax = rax + rsi
+		cmpq	$3, %rax		# 3 - %rax		
+		jge	L2
+
+	L2:
+		movq	%rsi, %rax		# %rax = rsi (result = y)
+		ret				
+
+
+	C code:
+	long example(long x, long y){
+	// First argument x is stored rdi
+	// Second argument y is stored in rsi
+	long result = x + y;
+	
+	if (result < 3){
+		return result;
+	}
+
+	result = y;
+
+	return result;			
+	}
+
+
+
+# Example 2:
+
+	ASM:					C:
+	example:				long example(long x, long y, long z){
+		leaq	(%rdi, %rsi), %rax	# x -> rdi, y -> rsi, z -> rdx
+		# rax = rdi + rsi			long val1 = x + y;
+		leaq	(%rsi, %rdx), %r10		long val2 = y + z;
+		cmpq	%r10, %rax # r10 - rax
+		jge	L2				if (val1 < val2){
+		addq	%r10, %rax				val1 = val2 + val1;
+		ret						return val1;
+							}else if(val1 > 0){
+	L2:							val1 = val1 * y;
+		cmpq	$0, rax	# 0 - rax			return val1;
+		jle	L3				}
+		imulq	%rsi, %rax			val1 = z;
+							return val1;
+	L3:					}
+		movq	%rdx, %rax
+		# rax = rdx
+		ret				
